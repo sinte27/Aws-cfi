@@ -1,0 +1,58 @@
+{
+  "Resources": {
+    "cfidevVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/26",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "InstanceTenancy": "default",
+        "Tags": [
+          { "Key": "stack", "Value": "cfidevVPC" },
+          {
+            "Key": "Name",
+            "Value": "AWS:VPClogical-id"
+          }
+        ]
+      }
+    },
+    "cfidevPubSbnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "10.0.0.0/28",
+        "MapPublicIpOnLaunch": true,
+        "VpcId": { "Ref": "cfidevVPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
+          {
+            "Key": "Name",
+            "Value": "DynamdevPubSubnet2"
+          }
+        ]
+      }
+    },
+    "cfidevPvtSbnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1b",
+        "CidrBlock": "10.0.0.16/28",
+        "MapPublicIpOnLaunch": false,
+        "VpcId": { "Ref": "cfidevVPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
+          {
+            "Key": "Name",
+            "Value": "DynamdevPvtSubnet2"
+          }
+        ]
+      }
+    },
+    "devIGW": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [{ "Key": "stack", "Value": "devigw" }]
+      }
+    }
+  }
+}
