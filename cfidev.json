@@ -26,7 +26,7 @@
             { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
             {
               "Key": "Name",
-              "Value": "DynamdevPubSubnet2"
+              "Value": "cfidevPubSbnet"
             }
           ]
         }
@@ -42,39 +42,40 @@
             { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
             {
               "Key": "Name",
-              "Value": "DynamdevPvtSubnet2"
+              "Value": "cfidevPvtSbnet"
             }
           ]
         }
       },
        "cfidevec2lnx": {
-        "Type": "AWS::EC2::Instance",
-        "Properties": {
+          "Type": "AWS::EC2::Instance",
+          "Properties": {
            "ImageId": "ami-0c2b8ca1dad447f8a",
            "BlockDeviceMappings": [
-          {
-            "DeviceName": "/dev/sdb",
-            "Ebs": {
-              "VolumeType": "io1",
-              "Iops": "400",
-              "DeleteOnTermination": "false",
-              "VolumeSize": "8"
-            }
-          },
-          {
-            "DeviceName": "/dev/sdb",
-            "NoDevice": {}
-          }],
-        "NetworkInterfaces": [
-          {
-            "AssociatePublicIpAddress": "true",
-            "DeviceIndex": "0",
-            "SubnetId": { "Ref": "cfidevPvtSbnet" }
-          }
-         ]
-        }
-      },
-         "cfidevec2wnds": {
+              {
+                "DeviceName": "/dev/sdb",
+                "Ebs": {
+                "VolumeType": "io1",
+                "Iops": "400",
+                "DeleteOnTermination": "false",
+                "VolumeSize": "8"
+               }
+              },
+              {
+              "DeviceName": "/dev/sdb",
+              "NoDevice": {}
+              }
+            ],
+            "NetworkInterfaces": [
+              {
+                "AssociatePublicIpAddress": "true",
+                "DeviceIndex": "0",
+                "SubnetId": { "Ref": "cfidevPubSbnet" }
+              }
+            ]
+         }
+        },
+      "cfidevec2wnds": {
          "Type": "AWS::EC2::Instance",
          "Properties": {
          "ImageId": "ami-029bfac3973c1bda1",
@@ -91,8 +92,7 @@
                   "DeviceName": "/dev/sda1",
                   "NoDevice": {}
                  }
-              ]
-              ,
+              ],
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": "false",
