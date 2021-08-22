@@ -64,15 +64,16 @@
           {
             "DeviceName": "/dev/sdb",
             "NoDevice": {}
-          }]
-        },
+          }],
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": "true",
             "DeviceIndex": "0",
             "SubnetId": { "Ref": "cfidevPvtSbnet" }
           }
-        ]},
+         ]
+        }
+      },
          "cfidevec2wnds": {
          "Type": "AWS::EC2::Instance",
          "Properties": {
@@ -91,14 +92,16 @@
                   "NoDevice": {}
                  }
               ]
-              },
+              ,
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": "false",
             "DeviceIndex": "0",
             "SubnetId": { "Ref": "cfidevPvtSbnet" }
           }
-        ]},
+        ]
+      }
+      },
       "cfidevIGW": {
         "Type": "AWS::EC2::InternetGateway",
         "Properties": {
