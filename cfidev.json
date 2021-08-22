@@ -10,7 +10,7 @@
             { "Key": "stack", "Value": "cfidevVPC" },
             {
               "Key": "Name",
-              "Value": "AWS:VPClogical-id"
+              "Value": "cfi-dev-VPC"
             }
           ]
         }
@@ -26,7 +26,7 @@
             { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
             {
               "Key": "Name",
-              "Value": "cfidevPubSbnet"
+              "Value": "cfi-dev-PubSbnet"
             }
           ]
         }
@@ -42,7 +42,7 @@
             { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
             {
               "Key": "Name",
-              "Value": "cfidevPvtSbnet"
+              "Value": "cfi-dev-PvtSbnet"
             }
           ]
         }
@@ -105,7 +105,7 @@
       "cfidevIGW": {
         "Type": "AWS::EC2::InternetGateway",
         "Properties": {
-          "Tags": [{ "Key": "stack", "Value": "devigw" }]
+          "Tags": [{ "Key": "stack", "Value": "devigw", "Name": "cif-dev-igw" }]
         }
       }
     }
