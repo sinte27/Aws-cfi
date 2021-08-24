@@ -1,113 +1,155 @@
-{   "Resources": {
-      "cfidevVPC": {
-        "Type": "AWS::EC2::VPC",
-        "Properties": {
-          "CidrBlock": "10.0.0.0/26",
-          "EnableDnsSupport": "true",
-          "EnableDnsHostnames": "true",
-          "InstanceTenancy": "default",
-          "Tags": [
-            { "Key": "stack", "Value": "cfidevVPC" },
-            {
-              "Key": "Name",
-              "Value": "cfi-dev-VPC"
+{
+  "Resources": {
+    "cfidevVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/26",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "InstanceTenancy": "default",
+        "Tags": [
+          { "Key": "stack", "Value": "cfidevVPC" },
+          {
+            "Key": "Name",
+            "Value": "cfi-dev-VPC"
+          }
+        ]
+      }
+    },
+    "cfidevPubSbnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "10.0.0.0/28",
+        "MapPublicIpOnLaunch": true,
+        "VpcId": { "Ref": "cfidevVPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
+          {
+            "Key": "Name",
+            "Value": "cfi-dev-PubSbnet"
+          }
+        ]
+      }
+    },
+    "cfidevPvtSbnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1b",
+        "CidrBlock": "10.0.0.16/28",
+        "MapPublicIpOnLaunch": false,
+        "VpcId": { "Ref": "cfidevVPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
+          {
+            "Key": "Name",
+            "Value": "cfi-dev-PvtSbnet"
+          }
+        ]
+      }
+    },
+    "cfidevsg": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow http to client host",
+        "VpcId": { "Ref": "cfidevVPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "cfidevec2lnx": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-0c2b8ca1dad447f8a",
+        "InstanceType": "t2.micro",
+        "KeyName": "DevEc2Est",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sdb",
+            "Ebs": {
+              "VolumeType": "io1",
+              "Iops": "400",
+              "DeleteOnTermination": "true",
+              "VolumeSize": "8"
             }
-          ]
-        }
-      },
-      "cfidevPubSbnet": {
-        "Type": "AWS::EC2::Subnet",
-        "Properties": {
-          "AvailabilityZone": "us-east-1a",
-          "CidrBlock": "10.0.0.0/28",
-          "MapPublicIpOnLaunch": true,
-          "VpcId": { "Ref": "cfidevVPC" },
-          "Tags": [
-            { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
-            {
-              "Key": "Name",
-              "Value": "cfi-dev-PubSbnet"
+          },
+          {
+            "DeviceName": "/dev/sdb",
+            "NoDevice": {}
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref": "cfidevsg" }],
+            "SubnetId": { "Ref": "cfidevPubSbnet" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "cfi-dev-lnx"
+          }
+        ]
+      }
+    },
+    "cfidevec2wnds": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-029bfac3973c1bda1",
+        "InstanceType": "t2.micro",
+        "KeyName": "DevEc2Est",
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "VolumeType": "standard",
+
+              "DeleteOnTermination": "True",
+              "VolumeSize": "30"
             }
-          ]
-        }
-      },
-      "cfidevPvtSbnet": {
-        "Type": "AWS::EC2::Subnet",
-        "Properties": {
-          "AvailabilityZone": "us-east-1b",
-          "CidrBlock": "10.0.0.16/28",
-          "MapPublicIpOnLaunch": false,
-          "VpcId": { "Ref": "cfidevVPC" },
-          "Tags": [
-            { "Key": "Stack", "Value": { "Ref": "AWS::StackId" } },
-            {
-              "Key": "Name",
-              "Value": "cfi-dev-PvtSbnet"
-            }
-          ]
-        }
-      },
-       "cfidevec2lnx": {
-          "Type": "AWS::EC2::Instance",
-          "Properties": {
-           "ImageId": "ami-0c2b8ca1dad447f8a",
-           "BlockDeviceMappings": [
-              {
-                "DeviceName": "/dev/sdb",
-                "Ebs": {
-                "VolumeType": "io1",
-                "Iops": "400",
-                "DeleteOnTermination": "false",
-                "VolumeSize": "8"
-               }
-              },
-              {
-              "DeviceName": "/dev/sdb",
-              "NoDevice": {}
-              }
-            ],
-            "NetworkInterfaces": [
-              {
-                "AssociatePublicIpAddress": "true",
-                "DeviceIndex": "0",
-                "SubnetId": { "Ref": "cfidevPubSbnet" }
-              }
-            ]
-         }
-        },
-      "cfidevec2wnds": {
-         "Type": "AWS::EC2::Instance",
-         "Properties": {
-         "ImageId": "ami-029bfac3973c1bda1",
-         "BlockDeviceMappings": [
-                {
-                  "DeviceName": "/dev/sda1",
-                  "Ebs": {
-                    "VolumeType": "io1",
-                    "Iops": "1500",
-                    "DeleteOnTermination": "false",
-                    "VolumeSize": "30"
-                  }},
-                 {
-                  "DeviceName": "/dev/sda1",
-                  "NoDevice": {}
-                 }
-              ],
+          },
+          {
+            "DeviceName": "/dev/sda1",
+            "NoDevice": {}
+          }
+        ],
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": "false",
             "DeviceIndex": "0",
+            "GroupSet": [{ "Ref": "cfidevsg" }],
             "SubnetId": { "Ref": "cfidevPvtSbnet" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "cfi-dev-windows"
           }
         ]
       }
-      },
-      "cfidevIGW": {
-        "Type": "AWS::EC2::InternetGateway",
-        "Properties": {
-          "Tags": [{ "Key": "stack", "Value": "devigw"}]
-        }
+    },
+    "cfidevIGW": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [{ "Key": "stack", "Value": "devigw" }]
       }
     }
   }
-
+}
